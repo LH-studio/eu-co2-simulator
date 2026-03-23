@@ -118,7 +118,7 @@ if (!euCountries.includes(country)) return;
           min: 1990,
           max: 2023,
           value: year,
-          onChange: e => setYear(e.target.value)
+          onChange: e => setYear(Number(e.target.value))
         }),
         React.createElement("p", null, "Jahr: " + year)
       )
