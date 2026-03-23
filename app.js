@@ -1,4 +1,5 @@
 const { useState, useEffect } = React;
+const [co2Data, setCo2Data] = useState({});
 
 function App() {
   const [geoData, setGeoData] = useState(null);
