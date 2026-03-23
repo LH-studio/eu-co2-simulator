@@ -111,6 +111,9 @@ if (!euCountries.includes(country)) return;
     return sum + (val || 0);
   }, 0);
 
+const projection = d3.geoMercator().fitSize([800, 600], geoData);
+const pathGenerator = d3.geoPath().projection(projection);
+
   return React.createElement("div", { className: "app" },
 
     // SIDEBAR
@@ -163,9 +166,7 @@ if (!euCountries.includes(country)) return;
 
   return React.createElement("path", {
     key: i,
-    d: d3.geoPath().projection(
-      d3.geoMercator().fitSize([800, 600], geoData)
-    )(feature),
+    d: pathGenerator(feature),
 
     // 👉 NEU: CSS STEUERT STYLING
     className: "country " + (selected ? "selected" : ""),
