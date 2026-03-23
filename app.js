@@ -8,63 +8,38 @@ function App() {
   const [hoveredCountry, setHoveredCountry] = useState(null);
 
   useEffect(() => {
-  Promise.all([
-    d3.json("https://raw.githubusercontent.com/leakyMirror/map-of-europe/master/GeoJSON/europe.geojson"),
-    d3.csv("https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv")
-  ])
-  .then(([geo, csv]) => {
+    Promise.all([
+      d3.json("https://raw.githubusercontent.com/leakyMirror/map-of-europe/master/GeoJSON/europe.geojson"),
+      d3.csv("https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv")
+    ])
+    .then(([geo, csv]) => {
 
-    console.log("GEO:", geo);
-    console.log("CSV sample:", csv.slice(0, 5));
+      const formatted = {};
 
-    const formatted = {};
+      const euCountries = [
+        "Germany","France","Italy","Spain","Poland","Netherlands","Belgium",
+        "Sweden","Austria","Czechia","Denmark","Finland","Portugal","Greece",
+        "Hungary","Ireland","Romania","Bulgaria","Slovakia","Slovenia",
+        "Croatia","Estonia","Latvia","Lithuania","Luxembourg","Malta","Cyprus"
+      ];
 
-    const euCountries = [
-      "Germany","France","Italy","Spain","Poland","Netherlands","Belgium",
-      "Sweden","Austria","Czechia","Denmark","Finland","Portugal","Greece",
-      "Hungary","Ireland","Romania","Bulgaria","Slovakia","Slovenia",
-      "Croatia","Estonia","Latvia","Lithuania","Luxembourg","Malta","Cyprus"
-    ];
-
-    csv.forEach(d => {
-  const country = d.country;
-  const y = d.year;
-  const value = parseFloat(d.co2_per_capita);
-
-  // 👉 ERST prüfen, ob Daten existieren
-  if (!country || !y || isNaN(value)) return;
-
-  // 👉 DANN EU Filter
-  if (!euCountries.includes(country)) return;
-
-  if (!formatted[country]) formatted[country] = {};
-  formatted[country][y] = value;
-});
-
-    console.log("FORMATTED:", formatted);
-
-    setGeoData(geo);
-    setCo2Data(formatted);
-  })
-  .catch(err => {
-    console.error("FEHLER BEIM LADEN:", err);
-  });
-}, []);
-
-if (!euCountries.includes(country)) return;
       csv.forEach(d => {
-  const country = d.country;
-  const y = d.year;
-  const value = parseFloat(d.co2_per_capita);
+        const country = d.country;
+        const y = d.year;
+        const value = parseFloat(d.co2_per_capita);
 
-  if (!country || !y || !value) return;
+        if (!country || !y || isNaN(value)) return;
+        if (!euCountries.includes(country)) return;
 
-  if (!formatted[country]) formatted[country] = {};
-  formatted[country][y] = value;
-});
+        if (!formatted[country]) formatted[country] = {};
+        formatted[country][y] = value;
+      });
 
       setGeoData(geo);
       setCo2Data(formatted);
+    })
+    .catch(err => {
+      console.error("FEHLER:", err);
     });
   }, []);
 
@@ -78,13 +53,6 @@ if (!euCountries.includes(country)) return;
 
   function getValue(name) {
     return co2Data[name]?.[year] || null;
-  }
-
-  function getColor(name) {
-    const selected = selectedCountries.includes(name);
-
-    if (selected) return "rgba(0,100,0,0.7)";
-    return "rgba(144,238,144,0.4)";
   }
 
   function selectAll() {
@@ -104,15 +72,18 @@ if (!euCountries.includes(country)) return;
     setSelectedCountries(["Sweden", "Norway", "Denmark"]);
   }
 
-  if (!geoData) return React.createElement("div", null, "Loading...");
+  if (!geoData || !geoData.features) {
+    return React.createElement("div", null, "Loading...");
+  }
+
+  // 🔥 stabile Projection
+  const projection = d3.geoMercator().fitSize([800, 600], geoData);
+  const pathGenerator = d3.geoPath().projection(projection);
 
   const total = selectedCountries.reduce((sum, c) => {
     const val = getValue(c);
     return sum + (val || 0);
   }, 0);
-
-const projection = d3.geoMercator().fitSize([800, 600], geoData);
-const pathGenerator = d3.geoPath().projection(projection);
 
   return React.createElement("div", { className: "app" },
 
@@ -157,50 +128,58 @@ const pathGenerator = d3.geoPath().projection(projection);
 
     // MAP
     React.createElement("div", { className: "map-container" },
+
       React.createElement("svg", { width: "100%", height: "100%" },
 
         geoData.features.map((feature, i) => {
-  const name = feature.properties.NAME;
-  const value = getValue(name);
-  const selected = selectedCountries.includes(name);
+          const name = feature.properties.NAME;
+          const value = getValue(name);
+          const selected = selectedCountries.includes(name);
 
-  return React.createElement("path", {
-    key: i,
-    d: pathGenerator(feature),
+          return React.createElement("path", {
+            key: i,
+            d: pathGenerator(feature),
 
-    // 👉 NEU: CSS STEUERT STYLING
-    className: "country " + (selected ? "selected" : ""),
+            className: "country " + (selected ? "selected" : ""),
 
-    strokeWidth: 1,
+            onClick: () => toggleCountry(name),
 
-    onClick: () => toggleCountry(name),
+            onMouseEnter: (e) => {
+              setHoveredCountry({
+                name,
+                value,
+                x: e.clientX,
+                y: e.clientY
+              });
+            },
 
-    onMouseEnter: (e) => {
-      setHoveredCountry({
-        name,
-        value,
-        x: e.clientX,
-        y: e.clientY
-      });
-    },
+            onMouseMove: (e) => {
+              setHoveredCountry(prev =>
+                prev ? { ...prev, x: e.clientX, y: e.clientY } : null
+              );
+            },
 
-    onMouseMove: (e) => {
-      setHoveredCountry(prev =>
-        prev ? { ...prev, x: e.clientX, y: e.clientY } : null
-      );
-    },
-
-    onMouseLeave: () => setHoveredCountry(null)
-  });
-})
+            onMouseLeave: () => setHoveredCountry(null)
+          });
+        })
       ),
 
       // TOOLTIP
       hoveredCountry &&
-      React.createElement("div", { className: "tooltip" },
+      React.createElement(
+        "div",
+        {
+          className: "tooltip",
+          style: {
+            left: hoveredCountry.x + 10 + "px",
+            top: hoveredCountry.y + 10 + "px"
+          }
+        },
         hoveredCountry.name + ": " +
-        (hoveredCountry.value ? hoveredCountry.value.toFixed(1) : "n/a") +
-        " t"
+        (hoveredCountry.value
+          ? hoveredCountry.value.toFixed(1)
+          : "n/a") +
+        " t CO₂"
       )
     )
   );
