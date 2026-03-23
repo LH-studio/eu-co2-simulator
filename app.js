@@ -119,22 +119,41 @@ function App() {
       React.createElement("svg", { width: "100%", height: "100%" },
 
         geoData.features.map((feature, i) => {
-          const name = feature.properties.NAME;
-          const value = getValue(name);
+  const name = feature.properties.NAME;
+  const value = getValue(name);
+  const selected = selectedCountries.includes(name);
 
-          return React.createElement("path", {
-            key: i,
-            d: d3.geoPath().projection(
-              d3.geoMercator().fitSize([800, 600], geoData)
-            )(feature),
-            fill: getColor(name),
-            stroke: selectedCountries.includes(name) ? "darkgreen" : "lightgreen",
-            strokeWidth: 1,
-            onClick: () => toggleCountry(name),
-            onMouseEnter: () => setHoveredCountry({ name, value }),
-            onMouseLeave: () => setHoveredCountry(null)
-          });
-        })
+  return React.createElement("path", {
+    key: i,
+    d: d3.geoPath().projection(
+      d3.geoMercator().fitSize([800, 600], geoData)
+    )(feature),
+
+    // 👉 NEU: CSS STEUERT STYLING
+    className: "country " + (selected ? "selected" : ""),
+
+    strokeWidth: 1,
+
+    onClick: () => toggleCountry(name),
+
+    onMouseEnter: (e) => {
+      setHoveredCountry({
+        name,
+        value,
+        x: e.clientX,
+        y: e.clientY
+      });
+    },
+
+    onMouseMove: (e) => {
+      setHoveredCountry(prev =>
+        prev ? { ...prev, x: e.clientX, y: e.clientY } : null
+      );
+    },
+
+    onMouseLeave: () => setHoveredCountry(null)
+  });
+})
       ),
 
       // TOOLTIP
