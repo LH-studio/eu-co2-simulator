@@ -2,22 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CO2 Explorer</title>
+  <title>EU CO2 Explorer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css">
 
-  <!-- React -->
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <!-- React (WICHTIG: richtige Version + Reihenfolge) -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
 
   <!-- D3 -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
 
-<div id="root"></div>
+  <!-- ROOT ELEMENT (SEHR WICHTIG) -->
+  <div id="root"></div>
 
-<script src="app.js"></script>
+  <!-- APP SCRIPT GANZ AM ENDE -->
+  <script src="app.js"></script>
+
 </body>
 </html>
