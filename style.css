@@ -1,7 +1,7 @@
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
-  background: #f5f5f5;
+  font-family: Arial, sans-serif;
+  background: #f8fafc;
 }
 
 .container {
@@ -14,67 +14,23 @@ h1 {
 
 .layout {
   display: flex;
-  gap: 30px;
+  gap: 20px;
 }
 
-.map button {
-  display: block;
-  margin: 10px 0;
-  padding: 10px;
-  cursor: pointer;
-}
-
-.map button.active {
-  background: #059669;
-  color: white;
+#map {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #ddd;
 }
 
 .panel {
   background: white;
-  padding: 20px;
-  border-radius: 10px;
-  min-width: 200px;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  width: 250px;
 }
 
-.map-svg {
-  width: 400px;
-  height: auto;
-  background: #e5e7eb;
-  border-radius: 10px;
-}
-
-.country {
-  fill: #cbd5e1;
-  stroke: #475569;
-  stroke-width: 1;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.country:hover {
-  fill: #94a3b8;
-}
-
-.country.active {
-  fill: #059669;
-}
-
-svg {
-  background: #e5e7eb;
-  border-radius: 10px;
-}
-
-.country {
-  fill: #cbd5e1;
-  stroke: #475569;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.country:hover {
-  fill: #94a3b8;
-}
-
-.country.active {
-  fill: #059669;
+.panel h2 {
+  margin-top: 0;
 }
