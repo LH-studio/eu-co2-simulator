@@ -141,7 +141,7 @@ function App() {
     "div",
     { className: "container" },
 
-    React.createElement("h1", null, "EU CO₂ Explorer"),
+    React.createElement("h1", null, "EU CO₂ Simulator"),
 
     React.createElement(
       "div",
