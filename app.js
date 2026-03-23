@@ -11,11 +11,15 @@ function App() {
     italy: 5.8
   };
 
-  useEffect(() => {
-    fetch("data/europe.geo.json")
-      .then(res => res.json())
-      .then(data => setGeoData(data));
-  }, []);
+ useEffect(() => {
+  Promise.all([
+    fetch("data/europe.geo.json").then(res => res.json()),
+    fetch("data/co2.json").then(res => res.json())
+  ]).then(([geo, co2]) => {
+    setGeoData(geo);
+    setCo2Data(co2);
+  });
+}, []);
 
   const toggleCountry = (id) => {
     if (selected.includes(id)) {
