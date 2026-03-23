@@ -10,20 +10,30 @@ function App() {
   useEffect(() => {
     Promise.all([
       d3.json("https://raw.githubusercontent.com/leakyMirror/map-of-europe/master/GeoJSON/europe.geojson"),
-      d3.csv("https://ourworldindata.org/grapher/co2-per-capita.csv")
+      d3.csv("https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv")
     ]).then(([geo, csv]) => {
 
       // Transform CSV → { country: { year: value } }
       const formatted = {};
 
-      csv.forEach(d => {
-        const country = d.Entity;
-        const y = d.Year;
-        const value = parseFloat(d.co2_per_capita);
+      const euCountries = [
+  "Germany","France","Italy","Spain","Poland","Netherlands","Belgium",
+  "Sweden","Austria","Czechia","Denmark","Finland","Portugal","Greece",
+  "Hungary","Ireland","Romania","Bulgaria","Slovakia","Slovenia",
+  "Croatia","Estonia","Latvia","Lithuania","Luxembourg","Malta","Cyprus"
+];
 
-        if (!formatted[country]) formatted[country] = {};
-        formatted[country][y] = value;
-      });
+if (!euCountries.includes(country)) return;
+      csv.forEach(d => {
+  const country = d.country;
+  const y = d.year;
+  const value = parseFloat(d.co2_per_capita);
+
+  if (!country || !y || !value) return;
+
+  if (!formatted[country]) formatted[country] = {};
+  formatted[country][y] = value;
+});
 
       setGeoData(geo);
       setCo2Data(formatted);
