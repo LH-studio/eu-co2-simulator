@@ -2,6 +2,7 @@ const { useState, useEffect } = React;
 
 function App() {
   const [geoData, setGeoData] = useState(null);
+  const [co2Data, setCo2Data] = useState({});
   const [selected, setSelected] = useState([]);
 
   const co2Data = {
