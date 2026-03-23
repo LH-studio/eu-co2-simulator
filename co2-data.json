@@ -1,0 +1,52 @@
+{
+  "meta": {
+    "source": "Our World in Data",
+    "metric": "CO₂ emissions per capita (tonnes/year)",
+    "year": 2022
+  },
+  "countries": {
+    "578": { "code": "NO", "name": "Norwegen", "nameEn": "Norway", "co2": 7.5, "pop": 5.4, "flag": "🇳🇴" },
+    "752": { "code": "SE", "name": "Schweden", "nameEn": "Sweden", "co2": 3.5, "pop": 10.4, "flag": "🇸🇪" },
+    "246": { "code": "FI", "name": "Finnland", "nameEn": "Finland", "co2": 7.1, "pop": 5.5, "flag": "🇫🇮" },
+    "208": { "code": "DK", "name": "Dänemark", "nameEn": "Denmark", "co2": 5.1, "pop": 5.8, "flag": "🇩🇰" },
+    "233": { "code": "EE", "name": "Estland", "nameEn": "Estonia", "co2": 8.4, "pop": 1.3, "flag": "🇪🇪" },
+    "428": { "code": "LV", "name": "Lettland", "nameEn": "Latvia", "co2": 3.5, "pop": 1.9, "flag": "🇱🇻" },
+    "440": { "code": "LT", "name": "Litauen", "nameEn": "Lithuania", "co2": 4.1, "pop": 2.8, "flag": "🇱🇹" },
+    "826": { "code": "GB", "name": "Großbritannien", "nameEn": "United Kingdom", "co2": 5.2, "pop": 67.3, "flag": "🇬🇧" },
+    "372": { "code": "IE", "name": "Irland", "nameEn": "Ireland", "co2": 7.7, "pop": 5.0, "flag": "🇮🇪" },
+    "528": { "code": "NL", "name": "Niederlande", "nameEn": "Netherlands", "co2": 8.8, "pop": 17.5, "flag": "🇳🇱" },
+    "056": { "code": "BE", "name": "Belgien", "nameEn": "Belgium", "co2": 8.2, "pop": 11.6, "flag": "🇧🇪" },
+    "276": { "code": "DE", "name": "Deutschland", "nameEn": "Germany", "co2": 8.1, "pop": 83.2, "flag": "🇩🇪" },
+    "616": { "code": "PL", "name": "Polen", "nameEn": "Poland", "co2": 8.3, "pop": 37.7, "flag": "🇵🇱" },
+    "203": { "code": "CZ", "name": "Tschechien", "nameEn": "Czechia", "co2": 9.3, "pop": 10.7, "flag": "🇨🇿" },
+    "703": { "code": "SK", "name": "Slowakei", "nameEn": "Slovakia", "co2": 5.7, "pop": 5.5, "flag": "🇸🇰" },
+    "040": { "code": "AT", "name": "Österreich", "nameEn": "Austria", "co2": 6.9, "pop": 9.0, "flag": "🇦🇹" },
+    "756": { "code": "CH", "name": "Schweiz", "nameEn": "Switzerland", "co2": 4.0, "pop": 8.7, "flag": "🇨🇭" },
+    "250": { "code": "FR", "name": "Frankreich", "nameEn": "France", "co2": 4.5, "pop": 67.4, "flag": "🇫🇷" },
+    "724": { "code": "ES", "name": "Spanien", "nameEn": "Spain", "co2": 5.2, "pop": 47.4, "flag": "🇪🇸" },
+    "620": { "code": "PT", "name": "Portugal", "nameEn": "Portugal", "co2": 4.3, "pop": 10.3, "flag": "🇵🇹" },
+    "380": { "code": "IT", "name": "Italien", "nameEn": "Italy", "co2": 5.8, "pop": 59.6, "flag": "🇮🇹" },
+    "705": { "code": "SI", "name": "Slowenien", "nameEn": "Slovenia", "co2": 6.1, "pop": 2.1, "flag": "🇸🇮" },
+    "191": { "code": "HR", "name": "Kroatien", "nameEn": "Croatia", "co2": 3.9, "pop": 3.9, "flag": "🇭🇷" },
+    "348": { "code": "HU", "name": "Ungarn", "nameEn": "Hungary", "co2": 4.4, "pop": 9.7, "flag": "🇭🇺" },
+    "642": { "code": "RO", "name": "Rumänien", "nameEn": "Romania", "co2": 3.7, "pop": 19.2, "flag": "🇷🇴" },
+    "100": { "code": "BG", "name": "Bulgarien", "nameEn": "Bulgaria", "co2": 5.5, "pop": 6.9, "flag": "🇧🇬" },
+    "300": { "code": "GR", "name": "Griechenland", "nameEn": "Greece", "co2": 5.8, "pop": 10.7, "flag": "🇬🇷" },
+    "688": { "code": "RS", "name": "Serbien", "nameEn": "Serbia", "co2": 5.8, "pop": 6.8, "flag": "🇷🇸" },
+    "442": { "code": "LU", "name": "Luxemburg", "nameEn": "Luxembourg", "co2": 11.3, "pop": 0.6, "flag": "🇱🇺" }
+  },
+  "scenarios": {
+    "renewables": { "label": "100% Erneuerbare", "factor": 0.4, "icon": "⚡", "desc": "Wind, Solar & Wasserkraft" },
+    "transport": { "label": "E-Mobilität", "factor": 0.75, "icon": "🚃", "desc": "Elektrifizierung des Verkehrs" },
+    "diet": { "label": "Pflanzenbasiert", "factor": 0.9, "icon": "🌱", "desc": "Weniger tierische Produkte" },
+    "buildings": { "label": "Sanierung", "factor": 0.85, "icon": "🏠", "desc": "Energetische Gebäudesanierung" },
+    "industry": { "label": "Grüne Industrie", "factor": 0.7, "icon": "🏭", "desc": "Dekarbonisierung" }
+  },
+  "presets": {
+    "all": ["578","752","246","208","233","428","440","826","372","528","056","276","616","203","703","040","756","250","724","620","380","705","191","348","642","100","300","688","442"],
+    "top6": ["276","250","380","724","616","528"],
+    "scandinavia": ["578","752","246","208"],
+    "dach": ["276","040","756"],
+    "benelux": ["528","056","442"]
+  }
+}
