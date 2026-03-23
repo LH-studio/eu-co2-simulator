@@ -38,7 +38,10 @@ function App() {
     const path = d3.geoPath().projection(projection);
 
     svg.selectAll("path")
-     .data(
+     geoData.features.forEach(d => {
+  d.properties.id = d.properties.name.toLowerCase();
+});
+      .data(
   geoData.features.filter(d =>
     d.properties.continent === "Europe"
   )
