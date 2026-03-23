@@ -27,16 +27,19 @@ function App() {
     ];
 
     csv.forEach(d => {
-      const country = d.country;
-      const y = d.year;
-      const value = parseFloat(d.co2_per_capita);
+  const country = d.country;
+  const y = d.year;
+  const value = parseFloat(d.co2_per_capita);
 
-      if (!country || !y || !value) return;
-      if (!euCountries.includes(country)) return;
+  // 👉 ERST prüfen, ob Daten existieren
+  if (!country || !y || isNaN(value)) return;
 
-      if (!formatted[country]) formatted[country] = {};
-      formatted[country][y] = value;
-    });
+  // 👉 DANN EU Filter
+  if (!euCountries.includes(country)) return;
+
+  if (!formatted[country]) formatted[country] = {};
+  formatted[country][y] = value;
+});
 
     console.log("FORMATTED:", formatted);
 
