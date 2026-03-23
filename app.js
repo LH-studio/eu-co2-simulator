@@ -4,7 +4,15 @@ function App() {
   const [geoData, setGeoData] = useState(null);
   const [co2Data, setCo2Data] = useState({});
   const [selected, setSelected] = useState([]);
+  const [tooltip, setTooltip] = useState(null);
 
+  // Gruppen
+  const groups = {
+    DACH: ["Germany", "Austria", "Switzerland"],
+    Skandinavien: ["Sweden", "Norway", "Denmark"]
+  };
+
+  // Daten laden
   useEffect(() => {
     Promise.all([
       fetch("./data/europe.geo.json").then(res => res.json()),
@@ -14,11 +22,10 @@ function App() {
         setGeoData(geo);
         setCo2Data(co2);
       })
-      .catch(err => {
-        console.error("Fehler beim Laden:", err);
-      });
+      .catch(err => console.error(err));
   }, []);
 
+  // Auswahl toggeln
   const toggleCountry = (name) => {
     if (selected.includes(name)) {
       setSelected(selected.filter(c => c !== name));
@@ -27,6 +34,34 @@ function App() {
     }
   };
 
+  // Quick Actions
+  const selectAll = () => {
+    const all = geoData.features.map(f => f.properties.name);
+    setSelected(all);
+  };
+
+  const clearAll = () => setSelected([]);
+
+  const selectGroup = (group) => {
+    setSelected(groups[group] || []);
+  };
+
+  // Tooltip
+  const showTooltip = (event, d) => {
+    const name = d.properties.name;
+    const value = co2Data[name];
+
+    setTooltip({
+      x: event.pageX,
+      y: event.pageY,
+      name,
+      value
+    });
+  };
+
+  const hideTooltip = () => setTooltip(null);
+
+  // Karte zeichnen
   useEffect(() => {
     if (!geoData) return;
 
@@ -45,70 +80,141 @@ function App() {
       .enter()
       .append("path")
       .attr("d", path)
+
+      // Farben
       .attr("fill", d => {
-  const name = d.properties.name;
-  if (selected.includes(name)) return "rgba(21, 128, 61, 0.6)";
-  return "rgba(255,255,255,1)";
-})
-.attr("stroke", d =>
-  selected.includes(d.properties.name) ? "#14532d" : "#86efac"
-)
-.attr("stroke-width", d =>
-  selected.includes(d.properties.name) ? 2 : 1
-)
-.on("mouseover", function (event, d) {
-  const name = d.properties.name;
-  if (!selected.includes(name)) {
-    d3.select(this).attr("fill", "rgba(134, 239, 172, 0.6)");
-  }
-})
-.on("mouseout", function (event, d) {
-  const name = d.properties.name;
-  if (!selected.includes(name)) {
-    d3.select(this).attr("fill", "white");
-  }
-})
-.on("click", (event, d) => {
-  toggleCountry(d.properties.name);
-});
+        const name = d.properties.name;
+        if (selected.includes(name)) {
+          return "rgba(34, 197, 94, 0.6)";
+        }
+        return "rgba(134, 239, 172, 0.25)";
+      })
+
+      // Rand
+      .attr("stroke", d =>
+        selected.includes(d.properties.name) ? "#166534" : "#86efac"
+      )
+      .attr("stroke-width", d =>
+        selected.includes(d.properties.name) ? 2 : 1
+      )
+
+      // Hover
+      .on("mouseover", function (event, d) {
+        const name = d.properties.name;
+
+        if (!selected.includes(name)) {
+          d3.select(this)
+            .attr("fill", "rgba(134, 239, 172, 0.5)");
+        }
+
+        showTooltip(event, d);
+      })
+
+      .on("mouseout", function (event, d) {
+        const name = d.properties.name;
+
+        if (!selected.includes(name)) {
+          d3.select(this)
+            .attr("fill", "rgba(134, 239, 172, 0.25)");
+        }
+
+        hideTooltip();
+      })
+
+      // Klick
+      .on("click", (event, d) => {
+        toggleCountry(d.properties.name);
+      });
 
   }, [geoData, selected, co2Data]);
 
+  // Berechnung
   const total = selected.reduce(
     (sum, c) => sum + (co2Data[c] || 0),
     0
   );
 
+  const avg = total / (selected.length || 1);
+
+  // UI
   return React.createElement(
     "div",
     { className: "container" },
-    React.createElement("h1", null, "EU CO₂ Simulator"),
+
+    React.createElement("h1", null, "EU CO₂ Explorer"),
 
     React.createElement(
       "div",
       { className: "layout" },
 
-      React.createElement("div", { className: "map-container" },
-  React.createElement("svg", {
-    id: "map"
-  })
-),
+      // MAP + BUTTONS
+      React.createElement(
+        "div",
+        { className: "map-container" },
 
+        // Buttons
+        React.createElement(
+          "div",
+          { style: { marginBottom: "10px" } },
+
+          React.createElement("button", { onClick: selectAll }, "Alle"),
+          React.createElement("button", { onClick: clearAll }, "Keine"),
+          React.createElement("button", { onClick: () => selectGroup("DACH") }, "DACH"),
+          React.createElement("button", { onClick: () => selectGroup("Skandinavien") }, "Skandinavien")
+        ),
+
+        React.createElement("svg", {
+          id: "map"
+        })
+      ),
+
+      // SIDEBAR
       React.createElement(
         "div",
         { className: "panel" },
 
-        React.createElement("h2", null, "Selected Countries"),
+        React.createElement("h2", null, "Dashboard"),
 
-        selected.length === 0
-          ? React.createElement("p", null, "None selected")
-          : selected.map(c =>
-              React.createElement("div", { key: c },
-                c + ": " + (co2Data[c] || "no data")
-              )
-            ),
+        React.createElement(
+          "div",
+          {
+            style: {
+              background: "#dcfce7",
+              padding: "5px 10px",
+              borderRadius: "20px",
+              display: "inline-block",
+              marginBottom: "10px"
+            }
+          },
+          selected.length + " Länder"
+        ),
 
-        React.createElement("h3", null, "Total: " + total.toFixed(2))
+        React.createElement("div", null, "Ø CO₂: " + avg.toFixed(1)),
+        React.createElement("div", null, "Gesamt: " + total.toFixed(1))
+      )
+    ),
+
+    // TOOLTIP
+    tooltip &&
+    React.createElement(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          left: tooltip.x + 10,
+          top: tooltip.y + 10,
+          background: "white",
+          padding: "10px",
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+          pointerEvents: "none"
+        }
+      },
+      React.createElement("strong", null, tooltip.name),
+      React.createElement(
+        "div",
+        null,
+        (tooltip.value || "–") + " t CO₂ / Kopf"
       )
     )
   );
