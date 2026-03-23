@@ -6,11 +6,6 @@ function App() {
   const [co2Data, setCo2Data] = useState({});
   const [selected, setSelected] = useState([]);
 
-  const co2Data = {
-    germany: 8.1,
-    france: 4.5,
-    italy: 5.8
-  };
 
  useEffect(() => {
   Promise.all([
