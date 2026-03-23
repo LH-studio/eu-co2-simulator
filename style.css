@@ -58,3 +58,23 @@ h1 {
 .country.active {
   fill: #059669;
 }
+
+svg {
+  background: #e5e7eb;
+  border-radius: 10px;
+}
+
+.country {
+  fill: #cbd5e1;
+  stroke: #475569;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.country:hover {
+  fill: #94a3b8;
+}
+
+.country.active {
+  fill: #059669;
+}
