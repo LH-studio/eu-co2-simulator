@@ -31,22 +31,45 @@ function App() {
   };
 
   useEffect(() => {
-    if (!geoData) return;
+  if (!geoData) return;
 
-    const svg = d3.select("#map");
-    svg.selectAll("*").remove();
+  geoData.features.forEach(d => {
+    d.properties.id = d.properties.name.toLowerCase();
+  });
 
-    const projection = d3.geoMercator()
-      .center([10, 50])
-      .scale(600)
-      .translate([200, 150]);
+  const svg = d3.select("#map");
+  svg.selectAll("*").remove();
 
-    const path = d3.geoPath().projection(projection);
+  const projection = d3.geoMercator()
+    .center([10, 50])
+    .scale(600)
+    .translate([200, 150]);
 
-    svg.selectAll("path")
-     geoData.features.forEach(d => {
-  d.properties.id = d.properties.name.toLowerCase();
-});
+  const path = d3.geoPath().projection(projection);
+
+  svg.selectAll("path")
+    .data(
+      geoData.features.filter(d =>
+        d.properties.continent === "Europe"
+      )
+    )
+    .enter()
+    .append("path")
+    .attr("d", path)
+    .attr("fill", d => {
+      const value = co2Data[d.properties.name];
+      if (!value) return "#eee";
+      if (value > 9) return "#7f1d1d";
+      if (value > 7) return "#b91c1c";
+      if (value > 5) return "#f97316";
+      if (value > 3) return "#facc15";
+      return "#4ade80";
+    })
+    .on("click", (event, d) => {
+      toggleCountry(d.properties.name);
+    });
+
+}, [geoData, selected, co2Data]);
       .data(
   geoData.features.filter(d =>
     d.properties.continent === "Europe"
