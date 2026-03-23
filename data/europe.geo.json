@@ -1,0 +1,29 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Germany", "id": "germany" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[10,50],[12,50],[12,52],[10,52],[10,50]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "France", "id": "france" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[2,46],[4,46],[4,48],[2,48],[2,46]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Italy", "id": "italy" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[12,42],[14,42],[14,44],[12,44],[12,42]]]
+      }
+    }
+  ]
+}
