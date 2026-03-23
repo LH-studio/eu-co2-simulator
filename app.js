@@ -15,7 +15,7 @@ function App() {
         setCo2Data(co2);
       })
       .catch(err => {
-        console.error("DATA LOAD ERROR:", err);
+        console.error("Fehler beim Laden:", err);
       });
   }, []);
 
@@ -89,10 +89,11 @@ function App() {
       React.createElement(
         "div",
         { className: "panel" },
-        React.createElement("h2", null, "Selected"),
+
+        React.createElement("h2", null, "Selected Countries"),
 
         selected.length === 0
-          ? React.createElement("p", null, "None")
+          ? React.createElement("p", null, "None selected")
           : selected.map(c =>
               React.createElement("div", { key: c },
                 c + ": " + (co2Data[c] || "no data")
