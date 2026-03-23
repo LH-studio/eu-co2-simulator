@@ -3,218 +3,146 @@ const { useState, useEffect } = React;
 function App() {
   const [geoData, setGeoData] = useState(null);
   const [co2Data, setCo2Data] = useState({});
-  const [selected, setSelected] = useState([]);
-  const [tooltip, setTooltip] = useState(null);
+  const [selectedCountries, setSelectedCountries] = useState([]);
+  const [year, setYear] = useState(2021);
+  const [hoveredCountry, setHoveredCountry] = useState(null);
 
-  // Gruppen
-  const groups = {
-    DACH: ["Germany", "Austria", "Switzerland"],
-    Skandinavien: ["Sweden", "Norway", "Denmark"]
-  };
-
-  // Daten laden
   useEffect(() => {
     Promise.all([
-      fetch("./data/europe.geo.json").then(res => res.json()),
-      fetch("./data/co2.json").then(res => res.json())
-    ])
-      .then(([geo, co2]) => {
-        setGeoData(geo);
-        setCo2Data(co2);
-      })
-      .catch(err => console.error(err));
-  }, []);
+      d3.json("https://raw.githubusercontent.com/leakyMirror/map-of-europe/master/GeoJSON/europe.geojson"),
+      d3.csv("https://ourworldindata.org/grapher/co2-per-capita.csv")
+    ]).then(([geo, csv]) => {
 
-  // Auswahl toggeln
-  const toggleCountry = (name) => {
-    if (selected.includes(name)) {
-      setSelected(selected.filter(c => c !== name));
-    } else {
-      setSelected([...selected, name]);
-    }
-  };
+      // Transform CSV → { country: { year: value } }
+      const formatted = {};
 
-  // Quick Actions
-  const selectAll = () => {
-    const all = geoData.features.map(f => f.properties.name);
-    setSelected(all);
-  };
+      csv.forEach(d => {
+        const country = d.Entity;
+        const y = d.Year;
+        const value = parseFloat(d.co2_per_capita);
 
-  const clearAll = () => setSelected([]);
-
-  const selectGroup = (group) => {
-    setSelected(groups[group] || []);
-  };
-
-  // Tooltip
-  const showTooltip = (event, d) => {
-    const name = d.properties.name;
-    const value = co2Data[name];
-
-    setTooltip({
-      x: event.pageX,
-      y: event.pageY,
-      name,
-      value
-    });
-  };
-
-  const hideTooltip = () => setTooltip(null);
-
-  // Karte zeichnen
-  useEffect(() => {
-    if (!geoData) return;
-
-    const svg = d3.select("#map");
-    svg.selectAll("*").remove();
-
-    const projection = d3.geoMercator()
-      .center([10, 50])
-      .scale(650)
-      .translate([350, 300]);
-
-    const path = d3.geoPath().projection(projection);
-
-    svg.selectAll("path")
-      .data(geoData.features)
-      .enter()
-      .append("path")
-      .attr("d", path)
-
-      // Farben
-      .attr("fill", d => {
-        const name = d.properties.name;
-        if (selected.includes(name)) {
-          return "rgba(34, 197, 94, 0.6)";
-        }
-        return "rgba(134, 239, 172, 0.25)";
-      })
-
-      // Rand
-      .attr("stroke", d =>
-        selected.includes(d.properties.name) ? "#166534" : "#86efac"
-      )
-      .attr("stroke-width", d =>
-        selected.includes(d.properties.name) ? 2 : 1
-      )
-
-      // Hover
-      .on("mouseover", function (event, d) {
-        const name = d.properties.name;
-
-        if (!selected.includes(name)) {
-          d3.select(this)
-            .attr("fill", "rgba(134, 239, 172, 0.5)");
-        }
-
-        showTooltip(event, d);
-      })
-
-      .on("mouseout", function (event, d) {
-        const name = d.properties.name;
-
-        if (!selected.includes(name)) {
-          d3.select(this)
-            .attr("fill", "rgba(134, 239, 172, 0.25)");
-        }
-
-        hideTooltip();
-      })
-
-      // Klick
-      .on("click", (event, d) => {
-        toggleCountry(d.properties.name);
+        if (!formatted[country]) formatted[country] = {};
+        formatted[country][y] = value;
       });
 
-  }, [geoData, selected, co2Data]);
+      setGeoData(geo);
+      setCo2Data(formatted);
+    });
+  }, []);
 
-  // Berechnung
-  const total = selected.reduce(
-    (sum, c) => sum + (co2Data[c] || 0),
-    0
-  );
+  function toggleCountry(name) {
+    setSelectedCountries(prev =>
+      prev.includes(name)
+        ? prev.filter(c => c !== name)
+        : [...prev, name]
+    );
+  }
 
-  const avg = total / (selected.length || 1);
+  function getValue(name) {
+    return co2Data[name]?.[year] || null;
+  }
 
-  // UI
-  return React.createElement(
-    "div",
-    { className: "container" },
+  function getColor(name) {
+    const selected = selectedCountries.includes(name);
 
-    React.createElement("h1", null, "EU CO₂ Simulator"),
+    if (selected) return "rgba(0,100,0,0.7)";
+    return "rgba(144,238,144,0.4)";
+  }
 
-    React.createElement(
-      "div",
-      { className: "layout" },
+  function selectAll() {
+    const all = geoData.features.map(f => f.properties.NAME);
+    setSelectedCountries(all);
+  }
 
-      // MAP + BUTTONS
-      React.createElement(
-        "div",
-        { className: "map-container" },
+  function clearAll() {
+    setSelectedCountries([]);
+  }
 
-        // Buttons
-        React.createElement(
-          "div",
-          { style: { marginBottom: "10px" } },
+  function selectDACH() {
+    setSelectedCountries(["Germany", "Austria", "Switzerland"]);
+  }
 
-          React.createElement("button", { onClick: selectAll }, "Alle"),
-          React.createElement("button", { onClick: clearAll }, "Keine"),
-          React.createElement("button", { onClick: () => selectGroup("DACH") }, "DACH"),
-          React.createElement("button", { onClick: () => selectGroup("Skandinavien") }, "Skandinavien")
-        ),
+  function selectScandinavia() {
+    setSelectedCountries(["Sweden", "Norway", "Denmark"]);
+  }
 
-        React.createElement("svg", {
-          id: "map"
-        })
+  if (!geoData) return React.createElement("div", null, "Loading...");
+
+  const total = selectedCountries.reduce((sum, c) => {
+    const val = getValue(c);
+    return sum + (val || 0);
+  }, 0);
+
+  return React.createElement("div", { className: "app" },
+
+    // SIDEBAR
+    React.createElement("div", { className: "sidebar" },
+
+      React.createElement("h1", null, "EU CO₂ Simulator"),
+
+      React.createElement("h2", { className: "subtitle" },
+        "Tonnen CO₂ pro Kopf · " + year + " · Our World in Data"
       ),
 
-      // SIDEBAR
-      React.createElement(
-        "div",
-        { className: "panel" },
+      React.createElement("div", { className: "card" },
+        React.createElement("h3", null, "Ausgewählt"),
+        React.createElement("p", null, selectedCountries.length + " Länder")
+      ),
 
-        React.createElement("h2", null, "Dashboard"),
+      React.createElement("div", { className: "card" },
+        React.createElement("h3", null, "Summe (approx.)"),
+        React.createElement("p", null, total.toFixed(1))
+      ),
 
-        React.createElement(
-          "div",
-          {
-            style: {
-              background: "#dcfce7",
-              padding: "5px 10px",
-              borderRadius: "20px",
-              display: "inline-block",
-              marginBottom: "10px"
-            }
-          },
-          selected.length + " Länder"
-        ),
+      React.createElement("div", { className: "buttons" },
+        React.createElement("button", { onClick: selectAll }, "Alle"),
+        React.createElement("button", { onClick: clearAll }, "Keine"),
+        React.createElement("button", { onClick: selectDACH }, "DACH"),
+        React.createElement("button", { onClick: selectScandinavia }, "Skandinavien")
+      ),
 
-        React.createElement("div", null, "Ø CO₂: " + avg.toFixed(1)),
-        React.createElement("div", null, "Gesamt: " + total.toFixed(1))
+      // SLIDER
+      React.createElement("div", { className: "slider" },
+        React.createElement("input", {
+          type: "range",
+          min: 1990,
+          max: 2023,
+          value: year,
+          onChange: e => setYear(e.target.value)
+        }),
+        React.createElement("p", null, "Jahr: " + year)
       )
     ),
 
-    // TOOLTIP
-    tooltip &&
-    React.createElement(
-      "div",
-      {
-        style: {
-          position: "absolute",
-          left: tooltip.x + 10,
-          top: tooltip.y + 10,
-          background: "white",
-          padding: "10px",
-          borderRadius: "8px",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-          pointerEvents: "none"
-        }
-      },
-      React.createElement("strong", null, tooltip.name),
-      React.createElement(
-        "div",
-        null,
-        (tooltip.value || "–") + " t CO₂ / Kopf"
+    // MAP
+    React.createElement("div", { className: "map-container" },
+      React.createElement("svg", { width: "100%", height: "100%" },
+
+        geoData.features.map((feature, i) => {
+          const name = feature.properties.NAME;
+          const value = getValue(name);
+
+          return React.createElement("path", {
+            key: i,
+            d: d3.geoPath().projection(
+              d3.geoMercator().fitSize([800, 600], geoData)
+            )(feature),
+            fill: getColor(name),
+            stroke: selectedCountries.includes(name) ? "darkgreen" : "lightgreen",
+            strokeWidth: 1,
+            onClick: () => toggleCountry(name),
+            onMouseEnter: () => setHoveredCountry({ name, value }),
+            onMouseLeave: () => setHoveredCountry(null)
+          });
+        })
+      ),
+
+      // TOOLTIP
+      hoveredCountry &&
+      React.createElement("div", { className: "tooltip" },
+        hoveredCountry.name + ": " +
+        (hoveredCountry.value ? hoveredCountry.value.toFixed(1) : "n/a") +
+        " t"
       )
     )
   );
