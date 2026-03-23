@@ -1,32 +1,21 @@
+/* GLOBAL */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
   background: #f1f5f9;
 }
 
-/* Layout */
-.container {
-  padding: 10px;
-  height: 100vh;
-  box-sizing: border-box;
-}
-
-.layout {
+/* MAIN LAYOUT */
+.app {
   display: flex;
-  height: calc(100vh - 20px);
+  height: 100vh;
+  padding: 10px;
+  box-sizing: border-box;
   gap: 10px;
 }
 
-/* Map Container */
-.map-container {
-  flex: 1;
-  background: white;
-  border-radius: 10px;
-  padding: 10px;
-}
-
-/* Sidebar */
-.panel {
+/* SIDEBAR */
+.sidebar {
   width: 300px;
   background: white;
   padding: 20px;
@@ -34,17 +23,103 @@ body {
   overflow-y: auto;
 }
 
-/* SVG */
-#map {
+/* MAP */
+.map-container {
+  flex: 1;
+  background: white;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* SVG FULLSIZE */
+.map-container svg {
   width: 100%;
   height: 100%;
 }
 
-/* Typography */
+/* TYPOGRAPHY */
 h1 {
-  margin: 0 0 10px 0;
+  margin: 0 0 5px 0;
 }
 
-h2 {
-  margin-top: 0;
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+/* DASHBOARD CARDS */
+.card {
+  background: #f9fafb;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.card h3 {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.card p {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* BUTTONS */
+.buttons {
+  margin: 10px 0;
+}
+
+button {
+  padding: 6px 10px;
+  margin: 3px;
+  border: none;
+  border-radius: 6px;
+  background: #e5e7eb;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #d1d5db;
+}
+
+/* SLIDER */
+.slider {
+  margin-top: 15px;
+}
+
+.slider input {
+  width: 100%;
+}
+
+/* TOOLTIP */
+.tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* COUNTRY STATES (optional später via class) */
+.country {
+  fill: rgba(144, 238, 144, 0.5);
+  stroke: lightgreen;
+  transition: 0.2s;
+}
+
+.country:hover {
+  fill: rgba(144, 238, 144, 0.8);
+}
+
+.country.selected {
+  fill: rgba(0, 100, 0, 0.7);
+  stroke: darkgreen;
 }
