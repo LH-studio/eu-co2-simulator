@@ -35,3 +35,26 @@ h1 {
   border-radius: 10px;
   min-width: 200px;
 }
+
+.map-svg {
+  width: 400px;
+  height: auto;
+  background: #e5e7eb;
+  border-radius: 10px;
+}
+
+.country {
+  fill: #cbd5e1;
+  stroke: #475569;
+  stroke-width: 1;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.country:hover {
+  fill: #94a3b8;
+}
+
+.country.active {
+  fill: #059669;
+}
