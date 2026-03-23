@@ -1,36 +1,50 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #f8fafc;
+  background: #f1f5f9;
 }
 
+/* Layout */
 .container {
-  padding: 20px;
-}
-
-h1 {
-  margin-bottom: 20px;
+  padding: 10px;
+  height: 100vh;
+  box-sizing: border-box;
 }
 
 .layout {
   display: flex;
-  gap: 20px;
+  height: calc(100vh - 20px);
+  gap: 10px;
 }
 
-#map {
+/* Map Container */
+.map-container {
+  flex: 1;
   background: white;
-  border-radius: 8px;
-  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
 }
 
+/* Sidebar */
 .panel {
+  width: 300px;
   background: white;
-  padding: 15px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  width: 250px;
+  padding: 20px;
+  border-radius: 10px;
+  overflow-y: auto;
 }
 
-.panel h2 {
+/* SVG */
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+/* Typography */
+h1 {
+  margin: 0 0 10px 0;
+}
+
+h2 {
   margin-top: 0;
 }
