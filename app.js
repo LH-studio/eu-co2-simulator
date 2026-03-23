@@ -35,8 +35,8 @@ function App() {
 
     const projection = d3.geoMercator()
       .center([10, 50])
-      .scale(500)
-      .translate([200, 150]);
+      .scale(650)
+      .translate([350, 300]);
 
     const path = d3.geoPath().projection(projection);
 
@@ -46,23 +46,31 @@ function App() {
       .append("path")
       .attr("d", path)
       .attr("fill", d => {
-        const value = co2Data[d.properties.name];
-        if (!value) return "#eee";
-        if (value > 9) return "#7f1d1d";
-        if (value > 7) return "#b91c1c";
-        if (value > 5) return "#f97316";
-        if (value > 3) return "#facc15";
-        return "#4ade80";
-      })
-      .attr("stroke", d =>
-        selected.includes(d.properties.name) ? "#000" : "#666"
-      )
-      .attr("stroke-width", d =>
-        selected.includes(d.properties.name) ? 2 : 1
-      )
-      .on("click", (event, d) => {
-        toggleCountry(d.properties.name);
-      });
+  const name = d.properties.name;
+  if (selected.includes(name)) return "rgba(21, 128, 61, 0.6)";
+  return "rgba(255,255,255,1)";
+})
+.attr("stroke", d =>
+  selected.includes(d.properties.name) ? "#14532d" : "#86efac"
+)
+.attr("stroke-width", d =>
+  selected.includes(d.properties.name) ? 2 : 1
+)
+.on("mouseover", function (event, d) {
+  const name = d.properties.name;
+  if (!selected.includes(name)) {
+    d3.select(this).attr("fill", "rgba(134, 239, 172, 0.6)");
+  }
+})
+.on("mouseout", function (event, d) {
+  const name = d.properties.name;
+  if (!selected.includes(name)) {
+    d3.select(this).attr("fill", "white");
+  }
+})
+.on("click", (event, d) => {
+  toggleCountry(d.properties.name);
+});
 
   }, [geoData, selected, co2Data]);
 
@@ -74,17 +82,17 @@ function App() {
   return React.createElement(
     "div",
     { className: "container" },
-    React.createElement("h1", null, "EU CO₂ Explorer"),
+    React.createElement("h1", null, "EU CO₂ Simulator"),
 
     React.createElement(
       "div",
       { className: "layout" },
 
-      React.createElement("svg", {
-        id: "map",
-        width: 400,
-        height: 300
-      }),
+      React.createElement("div", { className: "map-container" },
+  React.createElement("svg", {
+    id: "map"
+  })
+),
 
       React.createElement(
         "div",
