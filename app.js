@@ -8,20 +8,45 @@ function App() {
   const [hoveredCountry, setHoveredCountry] = useState(null);
 
   useEffect(() => {
-    Promise.all([
-      d3.json("https://raw.githubusercontent.com/leakyMirror/map-of-europe/master/GeoJSON/europe.geojson"),
-      d3.csv("https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv")
-    ]).then(([geo, csv]) => {
+  Promise.all([
+    d3.json("https://raw.githubusercontent.com/leakyMirror/map-of-europe/master/GeoJSON/europe.geojson"),
+    d3.csv("https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv")
+  ])
+  .then(([geo, csv]) => {
 
-      // Transform CSV → { country: { year: value } }
-      const formatted = {};
+    console.log("GEO:", geo);
+    console.log("CSV sample:", csv.slice(0, 5));
 
-      const euCountries = [
-  "Germany","France","Italy","Spain","Poland","Netherlands","Belgium",
-  "Sweden","Austria","Czechia","Denmark","Finland","Portugal","Greece",
-  "Hungary","Ireland","Romania","Bulgaria","Slovakia","Slovenia",
-  "Croatia","Estonia","Latvia","Lithuania","Luxembourg","Malta","Cyprus"
-];
+    const formatted = {};
+
+    const euCountries = [
+      "Germany","France","Italy","Spain","Poland","Netherlands","Belgium",
+      "Sweden","Austria","Czechia","Denmark","Finland","Portugal","Greece",
+      "Hungary","Ireland","Romania","Bulgaria","Slovakia","Slovenia",
+      "Croatia","Estonia","Latvia","Lithuania","Luxembourg","Malta","Cyprus"
+    ];
+
+    csv.forEach(d => {
+      const country = d.country;
+      const y = d.year;
+      const value = parseFloat(d.co2_per_capita);
+
+      if (!country || !y || !value) return;
+      if (!euCountries.includes(country)) return;
+
+      if (!formatted[country]) formatted[country] = {};
+      formatted[country][y] = value;
+    });
+
+    console.log("FORMATTED:", formatted);
+
+    setGeoData(geo);
+    setCo2Data(formatted);
+  })
+  .catch(err => {
+    console.error("FEHLER BEIM LADEN:", err);
+  });
+}, []);
 
 if (!euCountries.includes(country)) return;
       csv.forEach(d => {
