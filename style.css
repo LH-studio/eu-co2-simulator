@@ -1,0 +1,37 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f5f5f5;
+}
+
+.container {
+  padding: 20px;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.layout {
+  display: flex;
+  gap: 30px;
+}
+
+.map button {
+  display: block;
+  margin: 10px 0;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.map button.active {
+  background: #059669;
+  color: white;
+}
+
+.panel {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  min-width: 200px;
+}
