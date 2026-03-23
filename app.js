@@ -25,15 +25,32 @@ function App() {
 
       React.createElement("div", { className: "layout" },
 
-        // MAP
-        React.createElement("div", { className: "map" },
-          Object.keys(data).map(key =>
-            React.createElement("button", {
-              key: key,
-              className: selected.includes(key) ? "active" : "",
-              onClick: () => toggleCountry(key)
-            }, data[key].name)
-          )
+        // 🗺️ MAP
+        React.createElement("svg", {
+          viewBox: "0 0 300 200",
+          className: "map-svg"
+        },
+
+          // GERMANY
+          React.createElement("rect", {
+            x: 130, y: 60, width: 40, height: 40,
+            className: selected.includes("germany") ? "country active" : "country",
+            onClick: () => toggleCountry("germany")
+          }),
+
+          // FRANCE
+          React.createElement("rect", {
+            x: 80, y: 80, width: 40, height: 40,
+            className: selected.includes("france") ? "country active" : "country",
+            onClick: () => toggleCountry("france")
+          }),
+
+          // ITALY
+          React.createElement("rect", {
+            x: 160, y: 110, width: 30, height: 50,
+            className: selected.includes("italy") ? "country active" : "country",
+            onClick: () => toggleCountry("italy")
+          })
         ),
 
         // PANEL
